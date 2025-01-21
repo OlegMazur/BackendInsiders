@@ -1,43 +1,46 @@
 import { Request, Response } from "express";
-import { Participant } from "../models/Participant";
+import { registerParticipant, getEventsForUser, getParticipantsCountByEventId } from "../repositories/participantRepository";
+import { getEventById } from "../repositories/eventRepository";
 
-import { events } from "./eventController";
-
-const participants: Participant[] = [];
-
-
-export const registerParticipant = (req: Request, res: Response) => {
-  const { eventId, userId } = req.body;
-  const event = events.find((e) => e.id === eventId);
+export const registerUserForEvent = async (req: Request, res: Response) => {
+    const { eventId, userId } = req.body;
   
-  if (!event) {
-     res.status(404).json({ message: "Event not found" });
-     return
-  }
-
+    try {
+      const event = await getEventById(eventId);
+      console.log(event, "event");
+      if (!event) {
+         res.status(404).json({ message: "Event not found" });
+         return
+      }
   
-  const registeredCount = participants.filter((p) => p.eventId === eventId).length;
-  if (registeredCount >= event.maxParticipants) {
-     res.status(400).json({ message: "Event is full" });
-     return
-  }
-
-  const newParticipant: Participant = {
-    id: String(participants.length + 1),
-    eventId,
-    userId,
+      const participantsCount = await getParticipantsCountByEventId(eventId);
+ 
+      if (participantsCount >= event.max_participants) {
+         res.status(400).json({ message: "Event is full. No more participants can be registered." });
+          return
+      }
+  
+      const participant = await registerParticipant(eventId, userId);
+      res.status(201).json(participant);
+    } catch (error) {
+      console.error("Error registering participant:", error);
+      res.status(500).json({ message: "Error registering participant", error });
+    }
   };
 
-  participants.push(newParticipant);
-  res.status(201).json({ message: "Participant registered successfully", participant: newParticipant });
+export const getParticipants = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  
+  if (isNaN(Number(userId))) {
+    res.status(400).json({ message: "Invalid eventId parameter" });
+    return
+  }
+  try {
+    const participants = await getEventsForUser(Number(userId));
+     res.status(200).json(participants);
+     return
+  } catch (error) {
+     res.status(500).json({ message: "Error fetching participants", error });
+     return
+  }
 };
-export const getUserEvents = (req: Request, res: Response) => {
-    const { userId } = req.params;
-  
-    const userEvents = participants
-      .filter((p) => p.userId === userId)
-      .map((p) => events.find((e) => e.id === p.eventId));
-  
-    res.json(userEvents);
-  };
-  

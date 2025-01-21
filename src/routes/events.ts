@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getAllEvents, createEvent } from "../controllers/eventController";
+import { getAllEvents, createNewEvent } from "../controllers/eventController";
 
 const router = Router();
 
 router.get("/", getAllEvents);
-router.post("/", createEvent);
+router.post("/", createNewEvent);
 
 export default router;
