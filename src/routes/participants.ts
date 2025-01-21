@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { registerParticipant, getUserEvents } from "../controllers/participantController";
+import { registerUserForEvent, getParticipants } from "../controllers/participantController";
 import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", authenticate, registerParticipant);
-router.get("/:userId/events", getUserEvents);
+router.post("/", authenticate, registerUserForEvent);
+router.get("/:userId/events", getParticipants);
 
 export default router;

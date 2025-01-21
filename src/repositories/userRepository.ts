@@ -1,6 +1,4 @@
 import {pool} from "../db";
-import { User } from "../models/User"; 
-
 
 export const createUser = async (username:string, email:string, password:string) => {
   const result = await pool.query(
