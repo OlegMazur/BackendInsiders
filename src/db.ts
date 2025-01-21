@@ -1,11 +1,11 @@
 import { Pool } from "pg";
-
-
+import dotenv from "dotenv";
+dotenv.config();
 const pool = new Pool({
-  user: "postgres",   
-  host: "localhost",       
-  database: "postgres", 
-  password: "postgres",
+  user: process.env.DB_USER,   
+  host: process.env.DB_HOST,       
+  database: process.env.DB_NAME, 
+  password: process.env.DB_PASSWORD,
   port: 5432,               
 });
 const createDatabase = async (dbName: string) => {
@@ -32,11 +32,11 @@ const createDatabase = async (dbName: string) => {
   
   const createTables = async (dbName: string) => {
     const client = new Pool({
-      user: "postgres",
-      host: "localhost",
-      database: dbName, 
-      password: "postgres",
-      port: 5432,
+        user: process.env.DB_USER,   
+        host: process.env.DB_HOST,       
+        database: process.env.DB_NAME, 
+        password: process.env.DB_PASSWORD,
+        port: 5432,
     });
   
     const conn = await client.connect();

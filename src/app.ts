@@ -4,8 +4,10 @@ import eventRoutes from "./routes/events";
 import userRoutes from "./routes/users";
 import partisipantRoutes from "./routes/participants";
 import { createDatabase, createTables } from "./db";
+import dotenv from "dotenv";
 const app: Application = express();
 
+dotenv.config();
 createDatabase("insiders") 
   .then(() => createTables("insiders")) 
   .catch((err) => console.error("Failed to initialize database and tables", err));
