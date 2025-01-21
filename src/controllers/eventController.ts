@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Event } from "../models/Event";
 
-const events: Event[] = [];
+export const events: Event[] = [];
 
 export const getAllEvents = (req: Request, res: Response) => {
   res.json(events);
