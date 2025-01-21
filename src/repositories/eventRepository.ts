@@ -28,3 +28,15 @@ export const getEvents = async () => {
     client.release();
   }
 };
+export const getEventById = async (eventId: number) => {
+    const client = await pool.connect();
+    try {
+      const result = await client.query("SELECT * FROM events WHERE id = $1", [eventId]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error getting event by ID:", error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  };

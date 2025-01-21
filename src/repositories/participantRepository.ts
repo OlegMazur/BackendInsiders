@@ -36,3 +36,18 @@ export const getEventsForUser = async (userId: number) => {
     }
   };
   
+  export const getParticipantsCountByEventId = async (eventId: number) => {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        "SELECT COUNT(*) FROM participants WHERE event_id = $1",
+        [eventId]
+      );
+      return parseInt(result.rows[0].count, 10); 
+    } catch (error) {
+      console.error("Error getting participants count:", error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
